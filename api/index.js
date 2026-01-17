@@ -15,6 +15,7 @@ const app = express();
 // CORS
 const corsOptions = {
   origin: [
+    "https://durontopona.netlify.app",
     "https://demstv.vercel.app",
     "http://localhost:3000",
     "https://dmstv.netlify.app",
