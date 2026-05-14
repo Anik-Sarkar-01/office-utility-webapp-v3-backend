@@ -15,10 +15,12 @@ const app = express();
 // CORS
 const corsOptions = {
   origin: [
+    "https://office-utility-webapp-v3-frontend.vercel.app/login",
     "https://durontopona.netlify.app",
     "https://demstv.vercel.app",
     "http://localhost:3000",
     "https://dmstv.netlify.app",
+    "https://durontotv.netlify.app"
   ],
   methods: ["GET", "POST", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
