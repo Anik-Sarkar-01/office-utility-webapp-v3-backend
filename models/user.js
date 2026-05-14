@@ -42,11 +42,6 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    joiningDate: {
-      type: Date,
-      required: true,
-    },
-
     dateOfBirth: {
       type: Date,
       required: true,
