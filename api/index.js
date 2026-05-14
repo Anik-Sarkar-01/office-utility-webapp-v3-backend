@@ -19,6 +19,7 @@ const app = express();
 const corsOptions = {
   origin: [
     "https://office-utility-webapp-v3-frontend.vercel.app",
+    "https://teamduronto.vercel.app",
     "https://durontopona.netlify.app",
     "https://demstv.vercel.app",
     "http://localhost:3000",
