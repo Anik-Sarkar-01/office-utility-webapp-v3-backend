@@ -1,37 +1,27 @@
+// routes/leaveRoutes.js
+
 const express = require("express");
 const {
   applyForLeave,
-  approveLeave,
-  leaveEmployee,
-  pastLeaves,
-} = require("../controllers/leaveContoller");
+  getAllLeaveApplications,
+  getMyLeaveData,
+  decideLeave,
+  updateLeaveBalance,
+  deleteLeaveApplication,
+  updateLeaveApplication,
+} = require("../controllers/leaveController"); 
 
 const generateLeaveForm = require("../services/leaveFormGenerator");
 
 const leaveRoutes = express.Router();
 
-// Existing routes
-leaveRoutes.get("/applied-leave", leaveEmployee);
-
-leaveRoutes.patch("/applyForleave/:uid", applyForLeave);
-leaveRoutes.patch("/approve-leave/:leaveId", approveLeave);
-
+// ── PDF form generator ───────────────────────────────────────────────────────
 leaveRoutes.post("/generate-form", async (req, res, next) => {
-  console.log("I am in the leave routes");
-
   try {
-    // This is already a Buffer
     const pdfBuffer = await generateLeaveForm(req.body);
-
-    console.log("PDF size:", pdfBuffer.length); // DEBUG (remove later)
-
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=LeaveApplicationForm.pdf"
-    );
+    res.setHeader("Content-Disposition", "attachment; filename=LeaveApplicationForm.pdf");
     res.setHeader("Content-Length", pdfBuffer.length);
-
     res.send(pdfBuffer);
   } catch (error) {
     console.error(error);
@@ -39,5 +29,29 @@ leaveRoutes.post("/generate-form", async (req, res, next) => {
   }
 });
 
+// ── Employee routes ──────────────────────────────────────────────────────────
+
+// Submit a leave application
+leaveRoutes.post("/apply/:uid", applyForLeave);
+
+// Get own leave history + balance (used in leave form page)
+leaveRoutes.get("/my-applications/:uid", getMyLeaveData);
+
+// ── HR / Admin routes ────────────────────────────────────────────────────────
+
+// Get all applications (optional ?status=pending|approved|declined|all)
+leaveRoutes.get("/all", getAllLeaveApplications);
+
+// Approve or decline a specific application
+leaveRoutes.patch("/decide/:userId/:leaveId", decideLeave);
+
+// Manually update a user's leave balance
+leaveRoutes.patch("/balance/:userId", updateLeaveBalance);
+
+// Update leave application
+leaveRoutes.put("/:userId/:leaveId", updateLeaveApplication);
+
+// delete leave application
+leaveRoutes.delete("/:userId/:leaveId", deleteLeaveApplication);
 
 module.exports = leaveRoutes;

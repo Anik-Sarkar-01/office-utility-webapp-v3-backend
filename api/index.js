@@ -1,3 +1,5 @@
+// force redeploy
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -26,7 +28,7 @@ const corsOptions = {
     "https://dmstv.netlify.app",
     "https://durontotv.netlify.app"
   ],
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 };

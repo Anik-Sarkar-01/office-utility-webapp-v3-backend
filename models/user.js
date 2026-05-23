@@ -52,7 +52,6 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    // New fields added
     personInCharge: {
       type: String,
       required: true,
@@ -88,12 +87,36 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
 
-    leaveDate: [
+    // ── Leave balance (HR can edit anytime) ──────────────────────────────
+    leaveBalance: {
+      annual:      { type: Number, default: 15 },
+      sick:        { type: Number, default: 10 },
+      casual:      { type: Number, default: 8  },
+      replacement: { type: Number, default: 0  },
+    },
+
+    // ── Leave applications ───────────────────────────────────────────────
+    leaveApplications: [
       {
-        startDate: { type: String, default: "" },
-        endDate: { type: String, default: "" },
-        leave_status: { type: String, default: "pending" },
-        leaveDays: { type: Number, default: 0 },
+        // What the employee filled in
+        leaveType:       { type: String, required: true },   // "Annual"|"Sick"|"Casual"|"Replacement"|"Without Pay"
+        startDate:       { type: String, required: true },   // YYYY-MM-DD
+        endDate:         { type: String, required: true },   // YYYY-MM-DD
+        leaveDays:       { type: Number, required: true },
+        halfDay:         { type: String, default: "Not Required" },
+        reason:          { type: String, default: "" },
+
+        // Contact & coverage (from the form)
+        station:         { type: String, default: "" },
+        contact:         { type: String, default: "" },
+        personInCharge:  { type: String, default: "" },
+        reportingTo:     { type: String, default: "" },
+
+        // Status flow
+        status:          { type: String, default: "pending" }, // "pending"|"approved"|"declined"
+        appliedAt:       { type: Date,   default: Date.now },
+        decidedAt:       { type: Date },
+        decidedBy:       { type: String },  // HR user name who acted
       },
     ],
 
