@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const userModel = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("./hashingController");
+const cloudinary = require("../config/cloudinary");
 
 // Get user by ID
 const getUserById = async (req, res) => {
@@ -134,11 +135,35 @@ const editEmployee = async (req, res) => {
     const user = await userModel.findById(uid);
     if (!user) return res.status(404).json({ message: "User not found", success: false });
 
-    Object.assign(user, req.body);
-    user.image = req?.file?.path || user.image || "uploads/images/user-default.jpg";
+    // Update text fields
+    const fields = [
+      "name", "employeeId", "email", "phone", "address",
+      "linkedInId", "dateOfBirth", "department", "position",
+      "personInCharge", "personInChargePosition",
+      "reportingTo", "reportingToPosition",
+    ];
+    fields.forEach(f => { if (req.body[f] !== undefined) user[f] = req.body[f]; });
+
+    // Upload image to Cloudinary if provided
+    if (req.file) {
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "employee-profiles",
+            transformation: [{ width: 400, height: 400, crop: "fill", quality: "auto" }],
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(req.file.buffer);
+      });
+      user.image = uploadResult.secure_url;
+    }
 
     await user.save();
-    res.status(200).json({ message: "User updated successfully!", success: true });
+    res.status(200).json({ message: "User updated successfully!", success: true, user });
   } catch (err) {
     res.status(500).json({ message: err.message, success: false });
   }

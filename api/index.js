@@ -11,6 +11,7 @@ const leaveRoutes = require("../routes/leaveRoutes");
 const connectDb = require("../database/db");
 
 dotenv.config();
+require("./config/cloudinary");
 
 const app = express();
 
